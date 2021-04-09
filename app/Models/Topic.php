@@ -12,4 +12,10 @@ class Topic extends Model
     protected $fillable = [
         'topic'
     ];
+
+
+    public function subscribers()
+    {
+        return $this->hasMany(Subscriber::class);
+    }
 }

@@ -13,4 +13,9 @@ class Subscriber extends Model
         'url',
         'topic_id'
     ];
+
+    public function Topic()
+    {
+        return $this->belongsTo(Topic::class);
+    }
 }

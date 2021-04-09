@@ -10,8 +10,6 @@ class Message extends Model
     use HasFactory;
 
     protected $fillable = [
-        'title',
-        'body',
-        'topic_id'
+        'message'
     ];
 }

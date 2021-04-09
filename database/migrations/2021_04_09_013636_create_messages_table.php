@@ -15,13 +15,7 @@ class CreateMessagesTable extends Migration
     {
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->string('body');
-            $table->unsignedBigInteger('topic_id')->nullable();
-            $table->foreign('topic_id')
-                ->references('id')
-                ->on('topics')
-                ->onDelete('set null');
+            $table->string('message');
             $table->timestamps();
         });
     }
