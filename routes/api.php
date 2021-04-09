@@ -14,5 +14,5 @@ Route::apiResource('topics', 'App\Http\Controllers\TopicController');
 Route::post('subscribe/{topic}', 'App\Http\Controllers\SubscriberController@subscribe')->name('subscribe');
 
 
-Route::post('publish/{topic}', 'App\Http\Controllers\MessageController@publish')->name('publish');
+Route::post('publish/{topic}', 'App\Http\Controllers\MessageController@validateParameters')->name('publish');
 

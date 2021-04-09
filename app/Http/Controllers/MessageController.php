@@ -28,11 +28,10 @@ class MessageController extends Controller
         ], 200);
     }
 
-
-    public function publish(Request $request, $topic)
+    public function validateParameters(Request $request, $topic)
     {
         $targetTopic = Topic::find($topic);
-        // return response()->json( $request);
+
         if ($targetTopic) {
 
             $validator = Validator::make($request->all(), [
@@ -48,90 +47,15 @@ class MessageController extends Controller
                     ]
                 ]);
             }
+            (object) $payload = ([
+                'topic' => $targetTopic->topic,
+                'message' => $request->message,
+            ]);
+            $payloadObject = (object) $payload; // convert payload array to object
 
+            return $this->publish($targetTopic, $payloadObject); // Proceed to store message and publish to topic subscribers
 
-
-
-            // return response()->json($targetTopic->subscribers);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            try {
-                $addNewMessageToTopic = Message::create([
-                    'message' => $request->message,
-                    'topic_id' => $topic,
-                ]); // basic storage implementation
-
-                if ($addNewMessageToTopic) {
-
-                        $totalNumberOfSubscribers = $targetTopic -> subscribers->count();
-                        // return response()->json($totalNumberOfSubscribers);
-
-                        $totalNumberOfSubscribersProcessed = 0;
-
-                        foreach ($targetTopic -> subscribers as $subscriber)
-                        {
-                            Http::post($subscriber->url.'/recieve-message', [
-                                'topic' => $targetTopic->topic,
-                                'data' => $request->message,
-                            ]);
-                            $totalNumberOfSubscribersProcessed += 1;
-
-                        }
-                        if ($totalNumberOfSubscribersProcessed == $totalNumberOfSubscribers) {
-                            return response()->json([
-                            'code' => 201,
-                            'status' => 'success',
-                            'message' => 'Meassge added and successfully but was not published to all '.$totalNumberOfSubscribersProcessed.' subscribers',
-                            'data' => [
-                                'topic' => $targetTopic->topic,
-                                'message' => $request->message
-                            ]
-                        ], 201);
-                        } else {
-                            return response()->json([
-                                'code' => 500,
-                                'status' => 'error',
-                                'message' => 'Meassge added and successfully but was not published to all  subscribers',
-                                'data' => [
-                                    'topic' => $targetTopic->topic,
-                                    'message' => $request->message
-                                ]
-                            ], 500);
-                        }
-
-
-                } else {
-
-                    return response()->json([
-                        'code' => 500,
-                        'status' => 'error',
-                        'message' => 'Message was not created'
-                    ], 500);
-                }
-            } catch (\Exception $err) {
-
-                return response()->json([
-                    'code' => 500,
-                    'status' => 'error',
-                    'message' => $err
-                ], 500);
-            }
         } else {
-
             return response()->json([
                 'code' => 404,
                 'status' => 'error',
@@ -140,5 +64,74 @@ class MessageController extends Controller
         }
     }
 
+    // method to save the message and publish to subscribers
+    public function publish($targetTopic, $payload)
+    {
+        try {
+            $addNewMessageToTopic = Message::create([
+                'message' => $payload->message,
+                'topic_id' => $targetTopic->id
+            ]); // basic storage implementation
 
- }
+            if ($addNewMessageToTopic) {
+                // return response()->json($payload);
+
+                $totalNumberOfSubscribers = $targetTopic->subscribers->count(); // count number of subscribers subscribed to the topic / Target audience
+
+                $totalNumberOfSubscribersProcessed = 0; // initialize subscriber count
+
+                // NB: The following block implements a synchronouse dispatch of message to each subscriber
+                // This is only suitable for very small applications such as this but very ineffecient and costly for medium - large - enterprise applications
+                // Hence the need for asynchroneous dispatch using queues (database. redis, Beanstalkd, ...) becomes a very effecient and scalable approach
+                // I'll create another instance (Branch) and implement the dispatch using queues as a scalable approach
+
+                foreach ($targetTopic->subscribers as $subscriber) {
+                    // http post request to subscriber server using guzzle http cient
+                    // Basic post request without authentication/validation
+
+                    Http::post($subscriber->url . '/recieve-message', [
+                        'topic' => $payload->topic,
+                        'data' => $payload->message,
+                    ]);
+                    $totalNumberOfSubscribersProcessed += 1; // increment subscriber count by one after every request
+
+                }
+
+                //check if all subscribers have recieved the message and return corresponding messages to the client
+
+                if ($totalNumberOfSubscribersProcessed == $totalNumberOfSubscribers) {
+                    return response()->json([
+                        'code' => 201,
+                        'status' => 'success',
+                        'message' => 'Meassge added and successfully but was not published to all ' . $totalNumberOfSubscribersProcessed . ' subscribers',
+                        'data' => [
+                            'topic' => $payload->topic,
+                            'message' => $payload->message
+                        ]
+                    ], 201);
+                } else {
+                    return response()->json([
+                        'code' => 500,
+                        'status' => 'error',
+                        'message' => 'Meassge added and successfully but was not published to all  subscribers',
+                        'data' => [
+                            'topic' => $payload->topic,
+                            'message' => $payload->message
+                        ]
+                    ], 500);
+                }
+            } else {
+                return response()->json([
+                    'code' => 500,
+                    'status' => 'error',
+                    'message' => 'Message was not created'
+                ], 500);
+            }
+        } catch (\Exception $err) { // catch and return unhandled exceptions
+
+            return response()->json([
+                $err
+            ]);
+        }
+    }
+}

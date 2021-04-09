@@ -73,12 +73,8 @@ class TopicController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Topic  $topic
-     * @return \Illuminate\Http\Response
-     */
+
+     
     public function show(Topic $topic)
     {
         if ($topic) {
@@ -98,5 +94,5 @@ class TopicController extends Controller
 
     }
 
-   
+
 }

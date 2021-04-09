@@ -18,4 +18,9 @@ class Topic extends Model
     {
         return $this->hasMany(Subscriber::class);
     }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
 }

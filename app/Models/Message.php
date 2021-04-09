@@ -10,6 +10,12 @@ class Message extends Model
     use HasFactory;
 
     protected $fillable = [
-        'message'
+        'message',
+        'topic_id'
     ];
+
+    public function Topic()
+    {
+        return $this->belongsTo(Topic::class);
+    }
 }

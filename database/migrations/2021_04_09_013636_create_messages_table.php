@@ -16,6 +16,11 @@ class CreateMessagesTable extends Migration
         Schema::create('messages', function (Blueprint $table) {
             $table->id();
             $table->string('message');
+            $table->unsignedBigInteger('topic_id')->nullable();
+            $table->foreign('topic_id')
+                ->references('id')
+                ->on('topics')
+                ->onDelete('set null');
             $table->timestamps();
         });
     }
