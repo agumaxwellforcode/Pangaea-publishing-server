@@ -66,15 +66,15 @@ class TopicController extends Controller
 
         } else {
             return response()->json([
-                'code' => 500,
+                'code' => 501,
                 'status' => 'error',
                 'message' => 'Topic was not created'
-            ], 500);
+            ], 501);
         }
     }
 
 
-     
+
     public function show(Topic $topic)
     {
         if ($topic) {

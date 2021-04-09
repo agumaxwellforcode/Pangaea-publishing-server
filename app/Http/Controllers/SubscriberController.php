@@ -42,12 +42,13 @@ class SubscriberController extends Controller
 
             if ($validator->fails()) {
                 return response()->json([
+                    'code' => '403',
                     'status' => 'error',
                     'message' => [
                         'Fix the following parameter error(s) and retry',
                         $validator->errors()
                     ]
-                ]);
+                ],403);
             }
 
             try {
@@ -70,18 +71,18 @@ class SubscriberController extends Controller
                 } else {
 
                     return response()->json([
-                        'code' => 500,
+                        'code' => 501,
                         'status' => 'error',
                         'message' => 'Subcriber was not created'
-                    ], 500);
+                    ], 501);
                 }
             } catch (\Exception $err) {
 
                 return response()->json([
-                    'code' => 500,
+                    'code' => 501,
                     'status' => 'error',
                     'message' => $err
-                ], 500);
+                ], 501);
             }
         } else {
             return response()->json([

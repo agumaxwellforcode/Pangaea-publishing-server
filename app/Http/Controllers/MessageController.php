@@ -41,12 +41,13 @@ class MessageController extends Controller
 
             if ($validator->fails()) {
                 return response()->json([
+                    'code' => '403',
                     'status' => 'error',
                     'message' => [
                         'Fix the following parameter error(s) and retry',
                         $validator->errors()
                     ]
-                ]);
+                    ],403);
             }
             (object) $payload = ([
                 'topic' => $targetTopic->topic,
@@ -76,32 +77,12 @@ class MessageController extends Controller
 
             if ($addNewMessageToTopic) {
 
+                // I Used database queue for this application,
+                // I recommend Redis or third party or third party services for large - enterprice Applications
+                // Dispatch using queues as a scalable approach
+
                 dispatchMessageToSubscribers::dispatch($targetTopic, $payload);
 
-                // $totalNumberOfSubscribers = $targetTopic->subscribers->count(); // count number of subscribers subscribed to the topic / Target audience
-
-                // $totalNumberOfSubscribersProcessed = 0; // initialize subscriber count
-
-                // NB: The following block implements a synchronouse dispatch of message to each subscriber
-                // This is only suitable for very small applications such as this but very ineffecient and costly for medium - large - enterprise applications
-                // Hence the need for asynchroneous dispatch using queues (database. redis, Beanstalkd, ...) becomes a very effecient and scalable approach
-                // I'll create another instance (Branch) and implement the dispatch using queues as a scalable approach
-
-                // foreach ($targetTopic->subscribers as $subscriber) {
-                //     // http post request to subscriber server using guzzle http cient
-                //     // Basic post request without authentication/validation
-
-                //     Http::post($subscriber->url . '/recieve-message', [
-                //         'topic' => $payload->topic,
-                //         'data' => $payload->message,
-                //     ]);
-                //     $totalNumberOfSubscribersProcessed += 1; // increment subscriber count by one after every request
-
-                // }
-
-                //check if all subscribers have recieved the message and return corresponding messages to the client
-
-                // if ($totalNumberOfSubscribersProcessed == $totalNumberOfSubscribers) {
                     return response()->json([
                         'code' => 201,
                         'status' => 'success',
@@ -111,29 +92,20 @@ class MessageController extends Controller
                             'message' => $payload->message
                         ]
                     ], 201);
-                // } else {
-                //     return response()->json([
-                //         'code' => 500,
-                //         'status' => 'error',
-                //         'message' => 'Meassge added and successfully but was not published to all  subscribers',
-                //         'data' => [
-                //             'topic' => $payload->topic,
-                //             'message' => $payload->message
-                //         ]
-                //     ], 500);
-                // }
+
             } else {
                 return response()->json([
-                    'code' => 500,
+                    'code' => 501 ,
                     'status' => 'error',
                     'message' => 'Message was not created'
-                ], 500);
+                ], 501 );
             }
         } catch (\Exception $err) { // catch and return unhandled exceptions
-
             return response()->json([
-                $err
-            ]);
+                'code' => 501 ,
+                'status' => 'error',
+                'message' =>  $err
+            ],501 );
         }
     }
 }
