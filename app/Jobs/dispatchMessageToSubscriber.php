@@ -13,37 +13,36 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 
 
-class dispatchMessageToSubscribers implements ShouldQueue
+class dispatchMessageToSubscriber implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
 
-    private  $targetTopic;
+
     private  $payload;
+    private  $subscriber;
 
 
-    public function __construct($targetTopic, $payload)
+    public function __construct($subscriber, $payload)
     {
-        $this->targetTopic = $targetTopic;
+
         $this->payload = $payload;
+        $this->subscriber = $subscriber;
     }
 
 
     public function handle()
     {
-        $targetTopic = $this->targetTopic;
-        $payload = $this->payload;
-
-        // return response()->json($targetTopic);
 
         try {
-            foreach ($targetTopic->subscribers as $subscriber) {
-                // http post request to subscriber server using guzzle http cient
-                // Basic post request without authentication/validation
+            $response = Http::post($this->subscriber->url . '/recieve-message', [
+                'topic' => $this->payload->topic,
+                'message' => $this->payload->message,
+            ]);
 
-                dispatchMessageToSubscriber::dispatch($subscriber, $payload);
-                
-            }
+            if($response->status != 200) static::dispatch(
+                $this->subscriber, $this->payload
+             );
         } catch (\Throwable $exception) {
             if ($this->attempts() > 3) {
                 // hard fail after 3 attempts
