@@ -81,7 +81,8 @@ class MessageController extends Controller
                 $totalNumberOfSubscribersProcessed = 0; // initialize subscriber count
 
                 // NB: The following block implements a synchronouse dispatch of message to each subscriber
-                // This is only suitable for very small applications such as this but very ineffecient and costly for medium - large - enterprise applications
+                // This is only suitable for very small applications such as this but very ineffecient and
+                // costly(speed and processing resources) for medium - large - enterprise applications
                 // Hence the need for asynchroneous dispatch using queues (database. redis, Beanstalkd, ...) becomes a very effecient and scalable approach
                 // I'll create another instance (Branch) and implement the dispatch using queues as a scalable approach
 
@@ -103,7 +104,7 @@ class MessageController extends Controller
                     return response()->json([
                         'code' => 201,
                         'status' => 'success',
-                        'message' => 'Meassge added and successfully but was not published to all ' . $totalNumberOfSubscribersProcessed . ' subscribers',
+                        'message' => 'Meassge added and successfully and published to all ' . $totalNumberOfSubscribersProcessed . ' subscribers',
                         'data' => [
                             'topic' => $payload->topic,
                             'message' => $payload->message
@@ -122,10 +123,10 @@ class MessageController extends Controller
                 }
             } else {
                 return response()->json([
-                    'code' => 500,
+                    'code' => 501,
                     'status' => 'error',
                     'message' => 'Message was not created'
-                ], 500);
+                ], 501);
             }
         } catch (\Exception $err) { // catch and return unhandled exceptions
 
