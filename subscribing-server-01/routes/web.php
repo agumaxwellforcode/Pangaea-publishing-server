@@ -17,7 +17,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('recieve-message', 'App\Http\Controllers\RecieveMessageController@recieveMessageFromPublisher')->name('recieve-message');
+Route::post('/recieve-message1', 'App\Http\Controllers\RecieveMessageController@recieveMessageFromPublisher')->name('recieve-message1');
+Route::get('/recieve-message', 'App\Http\Controllers\RecieveMessageController@recieveMessageFromPublisherTest')->name('recieve-message');
 
 
 

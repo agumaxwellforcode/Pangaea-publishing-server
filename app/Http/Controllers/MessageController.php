@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Http;
 
 class MessageController extends Controller
 {
+
+
     /**
      * Display a listing of the resource.
      *
@@ -30,6 +32,7 @@ class MessageController extends Controller
 
     public function validateParameters(Request $request, $topic)
     {
+
         $targetTopic = Topic::find($topic);
 
         if ($targetTopic) {
@@ -67,6 +70,7 @@ class MessageController extends Controller
     // method to save the message and publish to subscribers
     public function publish($targetTopic, $payload)
     {
+
         try {
             $addNewMessageToTopic = Message::create([
                 'message' => $payload->message,
@@ -90,12 +94,16 @@ class MessageController extends Controller
                     // http post request to subscriber server using guzzle http cient
                     // Basic post request without authentication/validation
 
-                    Http::post($subscriber->url . '/recieve-message', [
+                    // Http::get('http://localhost:5000/recieve-message');
+                    $url = $subscriber->url.'/recieve-message1';
+
+                    $sendMessage = Http::post($url, [
                         'topic' => $payload->topic,
-                        'data' => $payload->message,
+                        'message' => $payload->message,
                     ]);
                     $totalNumberOfSubscribersProcessed += 1; // increment subscriber count by one after every request
-
+                 dd($sendMessage->status());
+                //  \Illuminate\Http\Client\Response::
                 }
 
                 //check if all subscribers have recieved the message and return corresponding messages to the client

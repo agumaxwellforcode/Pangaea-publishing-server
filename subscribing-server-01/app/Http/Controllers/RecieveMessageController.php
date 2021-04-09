@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\recievedMessage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -17,11 +18,28 @@ class RecieveMessageController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function recieveMessageFromPublisher(Request $request){
-        // Log::info(json_encode($request));
-        // $out = new \Symfony\Component\Console\Output\ConsoleOutput();
-        // $out->writeln("Hello from Terminal");
-        // return view('test')->with($request);
+        recievedMessage::create([
+            'topic' =>  $request->topic,
+            'message' =>  $request->message,
+        ]);
 
-        return redirect()->route('/test', [$request]);
+        // recievedMessage::create([
+        //     'topic' => 'test',
+        //     'message' => 'message'
+        // ]);
+        return;
+
+
+
+    }
+
+    public function recieveMessageFromPublisherTest(){
+        recievedMessage::create([
+            'topic' => 'test',
+            'message' => 'message'
+        ]);
+
+        return;
+
     }
 }
