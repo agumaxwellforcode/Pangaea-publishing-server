@@ -11,13 +11,6 @@ use Illuminate\Support\Facades\Http;
 
 class MessageController extends Controller
 {
-
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $allMessages = Message::all();
@@ -76,7 +69,6 @@ class MessageController extends Controller
     // method to save the message and publish to subscribers
     public function publish($targetTopic, $payload)
     {
-
         try {
             $addNewMessageToTopic = Message::create([
                 'message' => $payload->message,
@@ -84,9 +76,9 @@ class MessageController extends Controller
             ]); // basic storage implementation
 
             if ($addNewMessageToTopic) {
-                // return response()->json($payload);
 
                 $totalNumberOfSubscribers = $targetTopic->subscribers->count(); // count number of subscribers subscribed to the topic / Target audience
+                // return response()->json($totalNumberOfSubscribers);
 
                 $totalNumberOfSubscribersProcessed = 0; // initialize subscriber count
 
@@ -94,12 +86,14 @@ class MessageController extends Controller
                 // This is only suitable for very small applications such as this but very ineffecient and
                 // costly(speed and processing resources) for medium - large - enterprise applications with many subscribers/clients/users
                 // Hence the need for asynchroneous dispatch using queues (database. redis, Beanstalkd, ...) becomes a very effecient and scalable approach
-                // I'll create another instance (Branch) and implement the dispatch using queues as a scalable approach
+                // I'll create another instance (Branch == asynchronous-approach) and implement the dispatch using queues as a scalable approach
 
                 foreach ($targetTopic->subscribers as $subscriber) {
+
+                    $url = $subscriber->url . '/recieve-message';
+
                     // http post request to subscriber server using guzzle http cient
                     // Basic post request without authentication/validation
-                    $url = $subscriber->url . '/recieve-message';
 
                     $sendMessage = Http::post($url, [
                         'topic' => $payload->topic,
@@ -118,18 +112,6 @@ class MessageController extends Controller
                         'code' => 201,
                         'status' => 'success',
                         'message' => 'Meassge added and successfully and published to all ' . $totalNumberOfSubscribersProcessed . ' subscribers',
-                        'data' => [
-                            'topic' => $payload->topic,
-                            'message' => $payload->message
-                        ]
-                    ], 201);
-                }
-                // Handle incomplete dispatch
-                elseif (($totalNumberOfSubscribersProcessed < $totalNumberOfSubscribers) && ($totalNumberOfSubscribersProcessed != 0)) {
-                    return response()->json([
-                        'code' => 201,
-                        'status' => 'success',
-                        'message' => 'Meassge added and successfully and published to ' . $totalNumberOfSubscribersProcessed . ' out of ' . $totalNumberOfSubscribers . ' subscribers',
                         'data' => [
                             'topic' => $payload->topic,
                             'message' => $payload->message
@@ -155,8 +137,10 @@ class MessageController extends Controller
             }
         } catch (\Exception $err) { // catch and return unhandled exceptions
 
+
             return response()->json([
-                $err
+                'Possible error' => 'Meassge was added successfully and published to active subscribers (Live), while others who are inactive could not be sent to ',
+                'other errors' => $err
              ], 500);
         }
     }

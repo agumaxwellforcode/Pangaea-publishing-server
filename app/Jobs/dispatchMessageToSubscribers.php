@@ -34,10 +34,10 @@ class dispatchMessageToSubscribers implements ShouldQueue
         $targetTopic = $this->targetTopic;
         $payload = $this->payload;
 
-        // return response()->json($targetTopic);
-
+        // Trigger send message job
         try {
             foreach ($targetTopic->subscribers as $subscriber) {
+
                 // http post request to subscriber server using guzzle http cient
                 // Basic post request without authentication/validation
 

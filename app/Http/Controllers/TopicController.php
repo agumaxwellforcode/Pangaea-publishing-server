@@ -70,6 +70,8 @@ class TopicController extends Controller
     public function show($topic)
     {
         $targetTopic = Topic::find($topic);
+
+
         if ($targetTopic) {
             return response()->json([
                 'code' => 200,
