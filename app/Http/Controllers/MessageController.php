@@ -93,7 +93,7 @@ class MessageController extends Controller
                 // costly(speed and processing resources) for medium - large - enterprise applications with many subscribers/clients/users
                 // Hence the need for asynchroneous dispatch using queues (database. redis, Beanstalkd, ...) becomes a very effecient and scalable approach
                 // I'll create another instance (Branch) and implement the dispatch using queues as a scalable approach
-                
+
                 $totalNumberOfSubscribersProcessed = 0;
                 $totalNumberOfSubscribers = $targetTopic->subscribers->count();
                 foreach ($targetTopic->subscribers as $subscriber) {
