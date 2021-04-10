@@ -77,6 +77,20 @@ class MessageController extends Controller
 
             if ($addNewMessageToTopic) {
 
+                 // check for zero (0) subscribers for the target topic
+
+                 $totalNumberOfSubscribers = $targetTopic->subscribers->count();
+                 if ($totalNumberOfSubscribers == 0) {
+                    return response()->json([
+                        'code' => 200,
+                        'status' => 'success',
+                        'message' => 'Meassge added successfully but the topic has no subscribers',
+                        'data' => [
+                            'topic' => $payload->topic,
+                            'message' => $payload->message
+                        ]
+                    ], 200);
+                }
                 // I Used database queue for this application,
                 // I recommend Redis or a third party service for large - enterprice Applications
                 // Dispatch using queues as a scalable approach
@@ -86,7 +100,7 @@ class MessageController extends Controller
                     return response()->json([
                         'code' => 201,
                         'status' => 'success',
-                        'message' => 'Meassge added and successfully and published to all subscribers',
+                        'message' => 'Massge added successfully and published to all subscribers',
                         'data' => [
                             'topic' => $payload->topic,
                             'message' => $payload->message
