@@ -8,14 +8,9 @@ use Illuminate\Support\Facades\Validator;
 
 
 
-
 class TopicController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
         $allTopics = Topic::all();
@@ -28,12 +23,7 @@ class TopicController extends Controller
         ], 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -50,39 +40,42 @@ class TopicController extends Controller
             ]);
         }
 
-        $createNewTopic = Topic::create($request->all()); // basic storage implementation
-        // Return success message if topic was added successfully
+        try {
+            $createNewTopic = Topic::create($request->all()); // basic storage implementation
 
-        if ($createNewTopic) {
+            // Return success message if topic was added successfully
+            if ($createNewTopic) {
+                return response()->json([
+                    'code' => 201,
+                    'status' => 'success',
+                    'message' => 'Topic created successfully',
+                    'data' => $request->all()
+                ], 201);
 
+            } else {
+                return response()->json([
+                    'code' => 501,
+                    'status' => 'error',
+                    'message' => 'Topic was not created'
+                ], 501);
+            }
+        } catch (\Exception $err) { // catch unhandled exceptions
             return response()->json([
-                'code' => 201,
-                'status' => 'success',
-                'message' => 'Topic created successfully',
-                'data' => $request->all()
-            ], 201);
-
-
-
-        } else {
-            return response()->json([
-                'code' => 501,
-                'status' => 'error',
-                'message' => 'Topic was not created'
-            ], 501);
+               $err
+            ], 500);
         }
+
     }
 
-
-
-    public function show(Topic $topic)
+    public function show($topic)
     {
-        if ($topic) {
+        $targetTopic = Topic::find($topic);
+        if ($targetTopic) {
             return response()->json([
                 'code' => 200,
                 'status' => 'success',
                 'message' => 'Topic returned successfully',
-                'data' => $topic->subscribers()
+                'data' => $targetTopic
             ], 200);
         } else {
             return response()->json([

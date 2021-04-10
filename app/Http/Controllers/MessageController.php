@@ -26,17 +26,23 @@ class MessageController extends Controller
             'status' => 'success',
             'message' => 'Messages returned successfully',
             'data' => $allMessages
-
         ], 200);
     }
 
     public function validateParameters(Request $request, $topic)
     {
+        // Get the topic
+        // if ($topic->length()) {
+        //     # code...
+        // } else {
+        //     # code...
+        // }
 
+        // $checkForId = Topic::where('id','=',$topic);
         $targetTopic = Topic::find($topic);
 
         if ($targetTopic) {
-
+            // Validate the request payload
             $validator = Validator::make($request->all(), [
                 'message' => 'required',
             ]);
@@ -86,24 +92,23 @@ class MessageController extends Controller
 
                 // NB: The following block implements a synchronouse dispatch of message to each subscriber
                 // This is only suitable for very small applications such as this but very ineffecient and
-                // costly(speed and processing resources) for medium - large - enterprise applications
+                // costly(speed and processing resources) for medium - large - enterprise applications with many subscribers/clients/users
                 // Hence the need for asynchroneous dispatch using queues (database. redis, Beanstalkd, ...) becomes a very effecient and scalable approach
                 // I'll create another instance (Branch) and implement the dispatch using queues as a scalable approach
 
                 foreach ($targetTopic->subscribers as $subscriber) {
                     // http post request to subscriber server using guzzle http cient
                     // Basic post request without authentication/validation
-
-                    // Http::get('http://localhost:5000/recieve-message');
-                    $url = $subscriber->url.'/recieve-message1';
+                    $url = $subscriber->url . '/recieve-message';
 
                     $sendMessage = Http::post($url, [
                         'topic' => $payload->topic,
                         'message' => $payload->message,
                     ]);
-                    $totalNumberOfSubscribersProcessed += 1; // increment subscriber count by one after every request
-                 dd($sendMessage->status());
-                //  \Illuminate\Http\Client\Response::
+                    if ($sendMessage->status() == 200) {
+                        // increment processsed subscriber count by one after every successfull request
+                        $totalNumberOfSubscribersProcessed += 1;
+                    }
                 }
 
                 //check if all subscribers have recieved the message and return corresponding messages to the client
@@ -113,6 +118,18 @@ class MessageController extends Controller
                         'code' => 201,
                         'status' => 'success',
                         'message' => 'Meassge added and successfully and published to all ' . $totalNumberOfSubscribersProcessed . ' subscribers',
+                        'data' => [
+                            'topic' => $payload->topic,
+                            'message' => $payload->message
+                        ]
+                    ], 201);
+                }
+                // Handle incomplete dispatch
+                elseif (($totalNumberOfSubscribersProcessed < $totalNumberOfSubscribers) && ($totalNumberOfSubscribersProcessed != 0)) {
+                    return response()->json([
+                        'code' => 201,
+                        'status' => 'success',
+                        'message' => 'Meassge added and successfully and published to ' . $totalNumberOfSubscribersProcessed . ' out of ' . $totalNumberOfSubscribers . ' subscribers',
                         'data' => [
                             'topic' => $payload->topic,
                             'message' => $payload->message
@@ -140,7 +157,7 @@ class MessageController extends Controller
 
             return response()->json([
                 $err
-            ]);
+             ], 500);
         }
     }
 }
