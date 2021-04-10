@@ -45,11 +45,14 @@ class MessageController extends Controller
                     ]
                     ],403);
             }
+
             (object) $payload = ([
                 'topic' => $targetTopic->topic,
                 'message' => $request->message,
             ]);
             $payloadObject = (object) $payload; // convert payload array to object
+
+
 
             return $this->publish($targetTopic, $payloadObject); // Proceed to store message and publish to topic subscribers
 
@@ -65,6 +68,7 @@ class MessageController extends Controller
     // method to save the message and publish to subscribers
     public function publish($targetTopic, $payload)
     {
+
         try {
             $addNewMessageToTopic = Message::create([
                 'message' => $payload->message,
@@ -72,9 +76,8 @@ class MessageController extends Controller
             ]); // basic storage implementation
 
             if ($addNewMessageToTopic) {
-
                 $totalNumberOfSubscribers = $targetTopic->subscribers->count(); // count number of subscribers subscribed to the topic / Target audience
-                // return response()->json($totalNumberOfSubscribers);
+
 
                 $totalNumberOfSubscribersProcessed = 0; // initialize subscriber count
 
@@ -84,19 +87,20 @@ class MessageController extends Controller
                 // Hence the need for asynchroneous dispatch using queues (database. redis, Beanstalkd, ...) becomes a very effecient and scalable approach
                 // I'll create another instance (Branch == asynchronous-approach) and implement the dispatch using queues as a scalable approach
 
-                $totalNumberOfSubscribersProcessed = 0;
-                $totalNumberOfSubscribers = $targetTopic->subscribers->count();
                 foreach ($targetTopic->subscribers as $subscriber) {
 
                     $url = $subscriber->url . '/recieve-message';
 
-                    // http post request to subscriber server using guzzle http cient
+                    // http post request to subscriber server using guzzle http client
                     // Basic post request without authentication/validation
 
                     $sendMessage = Http::post($url, [
                         'topic' => $payload->topic,
                         'message' => $payload->message,
                     ]);
+
+
+
                     if ($sendMessage->status() == 200) {
                         // increment processsed subscriber count by one after every successfull request
                         $totalNumberOfSubscribersProcessed += 1;

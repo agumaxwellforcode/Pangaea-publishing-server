@@ -76,7 +76,7 @@
                                 <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
                                    I was built with the following resources
                                    <ul>
-                                        <li class="">Laravel 8,</li>
+                                        <li class="">php artisan websockets:serve </li>
                                         <li class="">MySql database,</li>
                                         <li class="">Queues (database) => asynchronous-approach branch,</li>
                                         <li class="">Guzzle HTTP client,</li>
