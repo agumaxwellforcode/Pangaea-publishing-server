@@ -497,7 +497,7 @@
                     title: 'Hello Subscriber!',
                     text: 'You have a new message from the publisher',
                     icon: 'info',
-                    confirmButtonText: 'Ok',
+                    confirmButtonText: 'Lets see',
 
                     // make the alert persistent, just and additive for testing purposes
                     allowOutsideClick: () => {
