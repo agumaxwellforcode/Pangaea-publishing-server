@@ -77,9 +77,21 @@ class MessageController extends Controller
 
             if ($addNewMessageToTopic) {
                 $totalNumberOfSubscribers = $targetTopic->subscribers->count(); // count number of subscribers subscribed to the topic / Target audience
-
-
                 $totalNumberOfSubscribersProcessed = 0; // initialize subscriber count
+
+
+                // check for zero (0) subscribers for the target topic
+                if ($totalNumberOfSubscribers == 0) {
+                    return response()->json([
+                        'code' => 200,
+                        'status' => 'success',
+                        'message' => 'Meassge added successfully but the topic has no subscribers',
+                        'data' => [
+                            'topic' => $payload->topic,
+                            'message' => $payload->message
+                        ]
+                    ], 200);
+                }
 
                 // NB: The following block implements a synchronouse dispatch of message to each subscriber
                 // This is only suitable for very small applications such as this but very ineffecient and
