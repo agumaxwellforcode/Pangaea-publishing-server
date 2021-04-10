@@ -12,13 +12,6 @@ use App\Jobs\dispatchMessageToSubscribers;
 
 class MessageController extends Controller
 {
-
-
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $allMessages = Message::all();
@@ -32,12 +25,6 @@ class MessageController extends Controller
 
     public function validateParameters(Request $request, $topic)
     {
-        // Get the topic
-        // if ($topic->length()) {
-        //     # code...
-        // } else {
-        //     # code...
-        // }
 
         // $checkForId = Topic::where('id','=',$topic);
         $targetTopic = Topic::find($topic);
@@ -78,7 +65,6 @@ class MessageController extends Controller
     // method to save the message and publish to subscribers
     public function publish($targetTopic, $payload)
     {
-
         try {
             $addNewMessageToTopic = Message::create([
                 'message' => $payload->message,
@@ -87,19 +73,25 @@ class MessageController extends Controller
 
             if ($addNewMessageToTopic) {
 
+                $totalNumberOfSubscribers = $targetTopic->subscribers->count(); // count number of subscribers subscribed to the topic / Target audience
+                // return response()->json($totalNumberOfSubscribers);
+
+                $totalNumberOfSubscribersProcessed = 0; // initialize subscriber count
 
                 // NB: The following block implements a synchronouse dispatch of message to each subscriber
                 // This is only suitable for very small applications such as this but very ineffecient and
                 // costly(speed and processing resources) for medium - large - enterprise applications with many subscribers/clients/users
                 // Hence the need for asynchroneous dispatch using queues (database. redis, Beanstalkd, ...) becomes a very effecient and scalable approach
-                // I'll create another instance (Branch) and implement the dispatch using queues as a scalable approach
+                // I'll create another instance (Branch == asynchronous-approach) and implement the dispatch using queues as a scalable approach
 
                 $totalNumberOfSubscribersProcessed = 0;
                 $totalNumberOfSubscribers = $targetTopic->subscribers->count();
                 foreach ($targetTopic->subscribers as $subscriber) {
+
+                    $url = $subscriber->url . '/recieve-message';
+
                     // http post request to subscriber server using guzzle http cient
                     // Basic post request without authentication/validation
-                    $url = $subscriber->url . '/recieve-message';
 
                     $sendMessage = Http::post($url, [
                         'topic' => $payload->topic,
@@ -134,8 +126,8 @@ class MessageController extends Controller
                             'topic' => $payload->topic,
                             'message' => $payload->message
                         ]
-                    ], 201);
-
+                    ], 500);
+                }
             } else {
                 return response()->json([
                     'code' => 501 ,
@@ -143,13 +135,15 @@ class MessageController extends Controller
                     'message' => 'Message was not created'
                 ], 501 );
             }
-         }
+
+
         } catch (\Exception $err) { // catch and return unhandled exceptions
+
+
             return response()->json([
-                'code' => 501 ,
-                'status' => 'error',
-                'message' =>  $err
-            ],501 );
+                'Possible error' => 'Meassge was added successfully and published to active subscribers (Live), while others who are inactive could not be sent to ',
+                'other errors' => $err
+             ], 500);
         }
     }
 }
