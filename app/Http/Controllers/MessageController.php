@@ -43,7 +43,7 @@ class MessageController extends Controller
                         'Fix the following parameter error(s) and retry',
                         $validator->errors()
                     ]
-                    ],403);
+                ], 403);
             }
 
             (object) $payload = ([
@@ -103,78 +103,48 @@ class MessageController extends Controller
 
                     $url = $subscriber->url . '/recieve-message';
 
-                 // check for zero (0) subscribers for the target topic
+                    // check for zero (0) subscribers for the target topic
 
-                 $totalNumberOfSubscribers = $targetTopic->subscribers->count();
-                 if ($totalNumberOfSubscribers == 0) {
-                    return response()->json([
-                        'code' => 200,
-                        'status' => 'success',
-                        'message' => 'Meassge added successfully but the topic has no subscribers',
-                        'data' => [
-                            'topic' => $payload->topic,
-                            'message' => $payload->message
-                        ]
-                    ], 200);
-                }
-                // I Used database queue for this application,
-                // I recommend Redis or a third party service for large - enterprice Applications
-                // Dispatch using queues as a scalable approach
-
-                    $sendMessage = Http::post($url, [
-                        'topic' => $payload->topic,
-                        'message' => $payload->message,
-                    ]);
-
-
-
-                    if ($sendMessage->status() == 200) {
-                        // increment processsed subscriber count by one after every successfull request
-                        $totalNumberOfSubscribersProcessed += 1;
+                    $totalNumberOfSubscribers = $targetTopic->subscribers->count();
+                    if ($totalNumberOfSubscribers == 0) {
+                        return response()->json([
+                            'code' => 200,
+                            'status' => 'success',
+                            'message' => 'Meassge added successfully but the topic has no subscribers',
+                            'data' => [
+                                'topic' => $payload->topic,
+                                'message' => $payload->message
+                            ]
+                        ], 200);
                     }
-                }
+                    // I Used database queue for this application,
+                    // I recommend Redis or a third party service for large - enterprice Applications
+                    // Dispatch using queues as a scalable approach
 
-                //check if all subscribers have recieved the message and return corresponding messages to the client
-
-                if ($totalNumberOfSubscribersProcessed == $totalNumberOfSubscribers) {
-                    return response()->json([
-                        'code' => 201,
-                        'status' => 'success',
-                        'message' => 'Massge added successfully and published to all subscribers',
-                        'data' => [
-                            'topic' => $payload->topic,
-                            'message' => $payload->message
-                        ]
-                    ], 201);
-                }
-                // Handle incomplete dispatch
-                elseif (($totalNumberOfSubscribersProcessed < $totalNumberOfSubscribers) && ($totalNumberOfSubscribersProcessed != 0)) {
-                    return response()->json([
-                        'code' => 201,
-                        'status' => 'success',
-                        'message' => 'Meassge added and successfully and published to ' . $totalNumberOfSubscribersProcessed . ' out of ' . $totalNumberOfSubscribers . ' subscribers',
-                        'data' => [
-                            'topic' => $payload->topic,
-                            'message' => $payload->message
-                        ]
-                    ], 500);
+                    try {
+                        dispatchMessageToSubscribers::dispatch($targetTopic, $payload);
+                    } catch (\Exception $err) {
+                        return response()->json([
+                            'code' => 501,
+                            'status' => 'error',
+                            'message' => $err
+                        ], 501);
+                    }
                 }
             } else {
                 return response()->json([
-                    'code' => 501 ,
+                    'code' => 501,
                     'status' => 'error',
                     'message' => 'Message was not created'
-                ], 501 );
+                ], 501);
             }
-
-
         } catch (\Exception $err) { // catch and return unhandled exceptions
 
 
             return response()->json([
                 'Possible error' => 'Meassge was added successfully and published to active subscribers (Live), while others who are inactive could not be sent to ',
                 'other errors' => $err
-             ], 500);
+            ], 500);
         }
     }
 }
