@@ -92,9 +92,11 @@
                                          <li class=""><code>composer install</code></li>
                                          <li class="">Set .env variables (<a class="underline" href="{{ url('/more') }}" >see .env settings</a>)</li>
                                          <li class=""><code>php artisan migrate</code></li>
+                                         <li class=""><code>php artisan db:seed</code></li>
                                          <li class=""><code>php artisan queue: work</code> :: asynchronous-approach branch </li>
-                                         <li class=""><code>npm run dev</code></li>git add .
-                                         
+                                         <li class=""><code>npm install</code></li>
+                                         <li class=""><code>npm run dev</code></li>
+
                                      </ul>
                                 </div>
                             </div>

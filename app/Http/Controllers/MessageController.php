@@ -43,7 +43,7 @@ class MessageController extends Controller
                         'Fix the following parameter error(s) and retry',
                         $validator->errors()
                     ]
-                    ],403);
+                ], 403);
             }
 
             (object) $payload = ([
@@ -146,20 +146,17 @@ class MessageController extends Controller
                 }
             } else {
                 return response()->json([
-                    'code' => 501 ,
+                    'code' => 501,
                     'status' => 'error',
                     'message' => 'Message was not created'
-                ], 501 );
+                ], 501);
             }
-
-
         } catch (\Exception $err) { // catch and return unhandled exceptions
-
 
             return response()->json([
                 'Possible error' => 'Meassge was added successfully and published to active subscribers (Live), while others who are inactive could not be sent to ',
                 'other errors' => $err
-             ], 500);
+            ], 500);
         }
     }
 }
