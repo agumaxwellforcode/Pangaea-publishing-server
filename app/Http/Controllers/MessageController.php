@@ -12,11 +12,6 @@ use App\Jobs\dispatchMessageToSubscribers;
 
 class MessageController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $allMessages = Message::all();
@@ -25,16 +20,17 @@ class MessageController extends Controller
             'status' => 'success',
             'message' => 'Messages returned successfully',
             'data' => $allMessages
-
         ], 200);
     }
 
     public function validateParameters(Request $request, $topic)
     {
+
+        // $checkForId = Topic::where('id','=',$topic);
         $targetTopic = Topic::find($topic);
 
         if ($targetTopic) {
-
+            // Validate the request payload
             $validator = Validator::make($request->all(), [
                 'message' => 'required',
             ]);
@@ -49,11 +45,14 @@ class MessageController extends Controller
                     ]
                     ],403);
             }
+
             (object) $payload = ([
                 'topic' => $targetTopic->topic,
                 'message' => $request->message,
             ]);
             $payloadObject = (object) $payload; // convert payload array to object
+
+
 
             return $this->publish($targetTopic, $payloadObject); // Proceed to store message and publish to topic subscribers
 
@@ -69,6 +68,7 @@ class MessageController extends Controller
     // method to save the message and publish to subscribers
     public function publish($targetTopic, $payload)
     {
+
         try {
             $addNewMessageToTopic = Message::create([
                 'message' => $payload->message,
@@ -76,6 +76,32 @@ class MessageController extends Controller
             ]); // basic storage implementation
 
             if ($addNewMessageToTopic) {
+                $totalNumberOfSubscribers = $targetTopic->subscribers->count(); // count number of subscribers subscribed to the topic / Target audience
+                $totalNumberOfSubscribersProcessed = 0; // initialize subscriber count
+
+
+                // check for zero (0) subscribers for the target topic
+                if ($totalNumberOfSubscribers == 0) {
+                    return response()->json([
+                        'code' => 200,
+                        'status' => 'success',
+                        'message' => 'Meassge added successfully but the topic has no subscribers',
+                        'data' => [
+                            'topic' => $payload->topic,
+                            'message' => $payload->message
+                        ]
+                    ], 200);
+                }
+
+                // NB: The following block implements a synchronouse dispatch of message to each subscriber
+                // This is only suitable for very small applications such as this but very ineffecient and
+                // costly(speed and processing resources) for medium - large - enterprise applications with many subscribers/clients/users
+                // Hence the need for asynchroneous dispatch using queues (database. redis, Beanstalkd, ...) becomes a very effecient and scalable approach
+                // I'll create another instance (Branch == asynchronous-approach) and implement the dispatch using queues as a scalable approach
+
+                foreach ($targetTopic->subscribers as $subscriber) {
+
+                    $url = $subscriber->url . '/recieve-message';
 
                  // check for zero (0) subscribers for the target topic
 
@@ -95,8 +121,22 @@ class MessageController extends Controller
                 // I recommend Redis or a third party service for large - enterprice Applications
                 // Dispatch using queues as a scalable approach
 
-                dispatchMessageToSubscribers::dispatch($targetTopic, $payload);
+                    $sendMessage = Http::post($url, [
+                        'topic' => $payload->topic,
+                        'message' => $payload->message,
+                    ]);
 
+
+
+                    if ($sendMessage->status() == 200) {
+                        // increment processsed subscriber count by one after every successfull request
+                        $totalNumberOfSubscribersProcessed += 1;
+                    }
+                }
+
+                //check if all subscribers have recieved the message and return corresponding messages to the client
+
+                if ($totalNumberOfSubscribersProcessed == $totalNumberOfSubscribers) {
                     return response()->json([
                         'code' => 201,
                         'status' => 'success',
@@ -106,7 +146,19 @@ class MessageController extends Controller
                             'message' => $payload->message
                         ]
                     ], 201);
-
+                }
+                // Handle incomplete dispatch
+                elseif (($totalNumberOfSubscribersProcessed < $totalNumberOfSubscribers) && ($totalNumberOfSubscribersProcessed != 0)) {
+                    return response()->json([
+                        'code' => 201,
+                        'status' => 'success',
+                        'message' => 'Meassge added and successfully and published to ' . $totalNumberOfSubscribersProcessed . ' out of ' . $totalNumberOfSubscribers . ' subscribers',
+                        'data' => [
+                            'topic' => $payload->topic,
+                            'message' => $payload->message
+                        ]
+                    ], 500);
+                }
             } else {
                 return response()->json([
                     'code' => 501 ,
@@ -114,12 +166,15 @@ class MessageController extends Controller
                     'message' => 'Message was not created'
                 ], 501 );
             }
+
+
         } catch (\Exception $err) { // catch and return unhandled exceptions
+
+
             return response()->json([
-                'code' => 501 ,
-                'status' => 'error',
-                'message' =>  $err
-            ],501 );
+                'Possible error' => 'Meassge was added successfully and published to active subscribers (Live), while others who are inactive could not be sent to ',
+                'other errors' => $err
+             ], 500);
         }
     }
 }

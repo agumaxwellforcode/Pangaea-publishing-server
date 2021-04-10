@@ -42,20 +42,26 @@
                         <div class="p-6">
                             <div class="flex items-center">
                                 <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-8 h-8 text-gray-500"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                                <div class="ml-4 text-lg leading-7 font-semibold"><a href="#" class=" text-gray-900 dark:text-white">Introduction</a></div>
+                                <div class="ml-4 text-lg leading-7 font-semibold"><a href="#" class=" text-gray-900 dark:text-white">ENV variables</a></div>
                             </div>
 
                             <div class="ml-12">
                                 <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-                                   Hello, I am the publisher and my job is to do the following
+
                                     <ul>
-                                        <li class="">Register topics,</li>
-                                        <li class="">Register Subscribers,</li>
-                                        <li class="">Add messages to topics and publish them to subscribers,</li>
+                                        <li class="">DB_CONNECTION = mysql</li>
+                                        <li class="">DB_DATABASE = { database name }</li>
+                                        <li class="">QUEUE_CONNECTION = database</li> <br>
 
                                     </ul>
-                                    cool 😎
-
+                                    The following should be set for the subscribing servers.
+                                    <ul>
+                                        <li class=""> PUSHER_APP_ID = 1185812</li>
+                                        <li class=""> PUSHER_APP_KEY = 7791c9f18b0b508bdd99 </li>
+                                        <li class=""> PUSHER_APP_SECRET = b5e16d6335e26cb9db7e </li>
+                                        <li class=""> PUSHER_APP_CLUSTER = mt1 </li> <br>
+                                    </ul>
+                                    The above keys and variables are for personal use and will be disabled after a feedback from you. I am aware of the risks 😆😆😆
                                 </div>
                             </div>
                         </div>
@@ -70,7 +76,7 @@
                                 <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
                                    I was built with the following resources
                                    <ul>
-                                        <li class="">Laravel 8,</li>
+                                        <li class="">php artisan websockets:serve </li>
                                         <li class="">MySql database,</li>
                                         <li class="">Queues (database) => asynchronous-approach branch,</li>
                                         <li class="">Guzzle HTTP client,</li>
@@ -79,47 +85,7 @@
                             </div>
                         </div>
 
-                        <div class="p-6 border-t border-gray-200 dark:border-gray-700">
-                            <div class="flex items-center">
-                                <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-8 h-8 text-gray-500"><path d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path></svg>
-                                <div class="ml-4 text-lg leading-7 font-semibold"><a href="#" class=" text-gray-900 dark:text-white">Setup and Installation</a></div>
-                            </div>
 
-                            <div class="ml-12">
-                                <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-                                   Lets get started (You already have)
-                                    <ul>
-                                         <li class=""><code>composer install</code></li>
-                                         <li class="">Set .env variables (<a class="underline" href="{{ url('/more') }}" >see .env settings</a>)</li>
-                                         <li class=""><code>php artisan migrate</code></li>
-                                         <li class=""><code>php artisan queue: work</code> :: asynchronous-approach branch </li>
-                                         <li class=""><code>npm run dev</code></li>git add .
-                                         
-                                     </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="p-6 border-t border-gray-200 dark:border-gray-700 md:border-l">
-                            <div class="flex items-center">
-                                <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" class="w-8 h-8 text-gray-500"><path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                <div class="ml-4 text-lg leading-7 font-semibold text-gray-900 dark:text-white">Endpoints to use</div>
-                            </div>
-
-                            <div class="ml-12">
-                                <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-                                    <ul>
-                                         <li class=""><code>post::http://{host:port}/api/topics :: {"topic":"I love pangaea"}</code></li>
-                                         <br>
-                                         <li class=""><code>get::http://{host:port}/api/topics/{topic} // 1, 5, 67, ...</code></li>
-                                         <br>
-                                         <li class=""><code>post::http://{host:port}/api/subscribe/{topic} :: {"url":"localhost:5000"}</code></li>
-                                         <br>
-                                         <li class=""><code>post::http://{host:port}/api/publish/{topic} :: {"message":"Pangaea ..."}</code></li>
-                                     </ul>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -130,7 +96,7 @@
                         Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
                     </div>
                     <div class="ml-4 text-center text-sm text-gray-500 sm:text-right sm:ml-0">
-                       Please Ignore the Icons :: default
+                        <a href="{{ url('/') }}" class="text-sm text-gray-700 underline">Back</a>
                     </div>
                 </div>
             </div>
