@@ -38,11 +38,13 @@ class dispatchMessageToSubscribers implements ShouldQueue
 
         try {
             foreach ($targetTopic->subscribers as $subscriber) {
+
                 // http post request to subscriber server using guzzle http cient
                 // Basic post request without authentication/validation
 
+                // Dispatch a job for each subscriber
                 dispatchMessageToSubscriber::dispatch($subscriber, $payload);
-                
+
             }
         } catch (\Throwable $exception) {
             if ($this->attempts() > 3) {

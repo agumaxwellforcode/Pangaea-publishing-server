@@ -34,6 +34,8 @@ class dispatchMessageToSubscriber implements ShouldQueue
     public function handle()
     {
 
+        // Job to handle single subscriber message
+
         try {
             $response = Http::post($this->subscriber->url . '/recieve-message', [
                 'topic' => $this->payload->topic,

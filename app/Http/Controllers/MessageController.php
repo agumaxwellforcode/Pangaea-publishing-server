@@ -78,7 +78,7 @@ class MessageController extends Controller
             if ($addNewMessageToTopic) {
 
                 // I Used database queue for this application,
-                // I recommend Redis or third party or third party services for large - enterprice Applications
+                // I recommend Redis or a third party service for large - enterprice Applications
                 // Dispatch using queues as a scalable approach
 
                 dispatchMessageToSubscribers::dispatch($targetTopic, $payload);
