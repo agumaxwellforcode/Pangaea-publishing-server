@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\Http;
+use App\Jobs\dispatchMessageToSubscribers;
 
 class MessageController extends Controller
 {
@@ -49,12 +50,13 @@ class MessageController extends Controller
 
             if ($validator->fails()) {
                 return response()->json([
+                    'code' => '403',
                     'status' => 'error',
                     'message' => [
                         'Fix the following parameter error(s) and retry',
                         $validator->errors()
                     ]
-                ]);
+                    ],403);
             }
             (object) $payload = ([
                 'topic' => $targetTopic->topic,
@@ -84,18 +86,20 @@ class MessageController extends Controller
             ]); // basic storage implementation
 
             if ($addNewMessageToTopic) {
-                // return response()->json($payload);
 
-                $totalNumberOfSubscribers = $targetTopic->subscribers->count(); // count number of subscribers subscribed to the topic / Target audience
+                // I Used database queue for this application,
+                // I recommend Redis or a third party service for large - enterprice Applications
+                // Dispatch using queues as a scalable approach
 
-                $totalNumberOfSubscribersProcessed = 0; // initialize subscriber count
+                dispatchMessageToSubscribers::dispatch($targetTopic, $payload);
 
                 // NB: The following block implements a synchronouse dispatch of message to each subscriber
                 // This is only suitable for very small applications such as this but very ineffecient and
                 // costly(speed and processing resources) for medium - large - enterprise applications with many subscribers/clients/users
                 // Hence the need for asynchroneous dispatch using queues (database. redis, Beanstalkd, ...) becomes a very effecient and scalable approach
                 // I'll create another instance (Branch) and implement the dispatch using queues as a scalable approach
-
+                $totalNumberOfSubscribersProcessed = 0;
+                $totalNumberOfSubscribers = $targetTopic->subscribers->count();
                 foreach ($targetTopic->subscribers as $subscriber) {
                     // http post request to subscriber server using guzzle http cient
                     // Basic post request without authentication/validation
@@ -135,29 +139,21 @@ class MessageController extends Controller
                             'message' => $payload->message
                         ]
                     ], 201);
-                } else {
-                    return response()->json([
-                        'code' => 500,
-                        'status' => 'error',
-                        'message' => 'Meassge added and successfully but was not published to all  subscribers',
-                        'data' => [
-                            'topic' => $payload->topic,
-                            'message' => $payload->message
-                        ]
-                    ], 500);
-                }
+
             } else {
                 return response()->json([
-                    'code' => 501,
+                    'code' => 501 ,
                     'status' => 'error',
                     'message' => 'Message was not created'
-                ], 501);
+                ], 501 );
             }
+         }
         } catch (\Exception $err) { // catch and return unhandled exceptions
-
             return response()->json([
-                $err
-             ], 500);
+                'code' => 501 ,
+                'status' => 'error',
+                'message' =>  $err
+            ],501 );
         }
     }
 }

@@ -61,8 +61,10 @@ class TopicController extends Controller
             }
         } catch (\Exception $err) { // catch unhandled exceptions
             return response()->json([
-               $err
-            ], 500);
+                'code' => 501,
+                'status' => 'error',
+                'message' => 'Topic was not created'
+            ], 501);
         }
 
     }
