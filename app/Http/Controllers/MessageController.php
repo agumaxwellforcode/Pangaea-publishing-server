@@ -77,7 +77,7 @@ class MessageController extends Controller
 
             if ($addNewMessageToTopic) {
                 $totalNumberOfSubscribers = $targetTopic->subscribers->count(); // count number of subscribers subscribed to the topic / Target audience
-
+                $totalNumberOfSubscribersProcessed = 0; // initialize subscriber count
 
 
                 // check for zero (0) subscribers for the target topic
@@ -93,21 +93,57 @@ class MessageController extends Controller
                     ], 200);
                 }
 
+                // NB: The following block implements a synchronouse dispatch of message to each subscriber
+                // This is only suitable for very small applications such as this but very ineffecient and
+                // costly(speed and processing resources) for medium - large - enterprise applications with many subscribers/clients/users
+                // Hence the need for asynchroneous dispatch using queues (database. redis, Beanstalkd, ...) becomes a very effecient and scalable approach
+                // I'll create another instance (Branch == asynchronous-approach) and implement the dispatch using queues as a scalable approach
 
-                    // I Used database queue for this application,
-                    // I recommend Redis or a third party service for large - enterprice Applications
-                    // Dispatch using queues as a scalable approach
+                foreach ($targetTopic->subscribers as $subscriber) {
 
-                    try {
-                        dispatchMessageToSubscribers::dispatch($targetTopic, $payload);
-                    } catch (\Exception $err) {
-                        return response()->json([
-                            'code' => 501,
-                            'status' => 'error',
-                            'message' => $err
-                        ], 501);
+                    $url = $subscriber->url . '/recieve-message';
+
+                    // http post request to subscriber server using guzzle http client
+                    // Basic post request without authentication/validation
+
+                    $sendMessage = Http::post($url, [
+                        'topic' => $payload->topic,
+                        'message' => $payload->message,
+                    ]);
+
+
+
+                    if ($sendMessage->status() == 200) {
+                        // increment processsed subscriber count by one after every successfull request
+                        $totalNumberOfSubscribersProcessed += 1;
                     }
+                }
 
+                //check if all subscribers have recieved the message and return corresponding messages to the client
+
+                if ($totalNumberOfSubscribersProcessed == $totalNumberOfSubscribers) {
+                    return response()->json([
+                        'code' => 201,
+                        'status' => 'success',
+                        'message' => 'Meassge added and successfully and published to all ' . $totalNumberOfSubscribersProcessed . ' subscribers',
+                        'data' => [
+                            'topic' => $payload->topic,
+                            'message' => $payload->message
+                        ]
+                    ], 201);
+                }
+                // Handle incomplete dispatch
+                elseif (($totalNumberOfSubscribersProcessed < $totalNumberOfSubscribers) && ($totalNumberOfSubscribersProcessed != 0)) {
+                    return response()->json([
+                        'code' => 201,
+                        'status' => 'success',
+                        'message' => 'Meassge added and successfully and published to ' . $totalNumberOfSubscribersProcessed . ' out of ' . $totalNumberOfSubscribers . ' subscribers',
+                        'data' => [
+                            'topic' => $payload->topic,
+                            'message' => $payload->message
+                        ]
+                    ], 500);
+                }
             } else {
                 return response()->json([
                     'code' => 501,
@@ -124,5 +160,3 @@ class MessageController extends Controller
         }
     }
 }
-
-
