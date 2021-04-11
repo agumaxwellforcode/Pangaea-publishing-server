@@ -97,6 +97,8 @@
                                          <li class=""><code>php artisan queue: work</code> :: asynchronous-approach branch </li>
                                          <li class=""><code>npm install</code></li>
                                          <li class=""><code>npm run dev</code></li>
+                                         <li class=""><code>php artisan test</code></li>
+                                         <li class=""><code>php artisan serve</code></li>
 
                                      </ul>
                                 </div>
