@@ -32,12 +32,13 @@ class TopicController extends Controller
 
         if ($validator->fails()){
             return response()->json([
+                'code' => 422,
                 'status' => 'error',
                 'message' => [
                     'Fix the following parameter error(s) and retry',
                     $validator->errors()
                 ]
-            ]);
+                ],422);
         }
 
         try {

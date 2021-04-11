@@ -140,7 +140,6 @@ class MessageController extends Controller
             }
         } catch (\Exception $err) { // catch and return unhandled exceptions
 
-
             return response()->json([
                 'Possible error' => 'Meassge was added successfully and published to active subscribers (Live), while others who are inactive could not be sent to ',
                 'other errors' => $err

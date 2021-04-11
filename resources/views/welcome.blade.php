@@ -51,7 +51,8 @@
                                     <ul>
                                         <li class="">Register topics,</li>
                                         <li class="">Register Subscribers,</li>
-                                        <li class="">Add messages to topics and publish them to subscribers,</li>
+                                        <li class="">Add messages to topics and publish them to <a class="underline" href="{{ url('/more') }}" target="_blank" rel="noopener noreferrer">subscribers</a> ,</li>
+                                        <li class="">Checkout a demo <a class="underline" target="blank" href="https://drive.google.com/file/d/1ZCzl-vPqBwPf9ncF8UAFrXuhz3FOgAaw/view">Here</a></li>
 
                                     </ul>
                                     cool 😎
@@ -92,9 +93,11 @@
                                          <li class=""><code>composer install</code></li>
                                          <li class="">Set .env variables (<a class="underline" href="{{ url('/more') }}" >see .env settings</a>)</li>
                                          <li class=""><code>php artisan migrate</code></li>
+                                         <li class=""><code>php artisan db:seed</code></li>
                                          <li class=""><code>php artisan queue: work</code> :: asynchronous-approach branch </li>
-                                         <li class=""><code>npm run dev</code></li>git add .
-                                         
+                                         <li class=""><code>npm install</code></li>
+                                         <li class=""><code>npm run dev</code></li>
+
                                      </ul>
                                 </div>
                             </div>
@@ -109,13 +112,25 @@
                             <div class="ml-12">
                                 <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
                                     <ul>
-                                         <li class=""><code>post::http://{host:port}/api/topics :: {"topic":"I love pangaea"}</code></li>
+                                         <li class="">
+                                             <h5 style="margin:0px;">Create a topic :: payload => topic : string</h5>
+                                             <code>post::http://{host:port}/api/topics :: {"topic":"I love pangaea"}</code>
+                                        </li>
                                          <br>
-                                         <li class=""><code>get::http://{host:port}/api/topics/{topic} // 1, 5, 67, ...</code></li>
+                                         <li class="">
+                                            <h5 style="margin:0px;">Get/retrieve a topic :: parameter => topic id : integer</h5>
+                                             <code>get::http://{host:port}/api/topics/{topic} // 1, 5, 67, ...</code>
+                                        </li>
                                          <br>
-                                         <li class=""><code>post::http://{host:port}/api/subscribe/{topic} :: {"url":"localhost:5000"}</code></li>
+                                         <li class="">
+                                            <h5 style="margin:0px;">Subscribe to a topic :: parameter => topic id : integer , payload => url</h5>
+                                             <code>post::http://{host:port}/api/subscribe/{topic} :: {"url":"localhost:5000"}</code>
+                                        </li>
                                          <br>
-                                         <li class=""><code>post::http://{host:port}/api/publish/{topic} :: {"message":"Pangaea ..."}</code></li>
+                                         <li class="">
+                                            <h5 style="margin:0px;">Add a message and publish to subscribers of a topic :: parameter => topic id , payload => message</h5>
+                                             <code>post::http://{host:port}/api/publish/{topic} :: {"message":"Pangaea ..."}</code>
+                                        </li>
                                      </ul>
                                 </div>
                             </div>
