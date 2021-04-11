@@ -54,6 +54,9 @@ The application is not containerized, hence the manual commands.
  - npm run dev
  - php artisan serve
 
+ Please run 
+    composer dumpautoload and php artisan optimize
+
  ### Setup and Installation ( Subscribers )
 
 Run the following commands and settings
@@ -70,6 +73,9 @@ The application is not containerized, hence the manual commands.
  - npm run dev
  - php artisan serve --port {any port of choice} except publisher port
 
+  Please run 
+    composer dumpautoload and php artisan optimize
+
 ## Main Endpoints
 Endpoints to use (Basic to achieve the task)
 
@@ -79,14 +85,16 @@ Create a topic :: payload => topic : string
 
 post::http://{host:port}/api/topics :: {"topic":"I love pangaea"}
 
-
+|
+|
 
 
 Get/retrieve a topic :: parameter => topic id : integer
 
 get::http://{host:port}/api/topics/{topic} // 1, 5, 67, ...
 
-
+|
+|
 
 
 Subscribe to a topic :: parameter => topic id : integer , payload => url
@@ -94,7 +102,8 @@ Subscribe to a topic :: parameter => topic id : integer , payload => url
 post::http://{host:port}/api/subscribe/{topic} :: {"url":"localhost:5000"}
 
 
-
+|
+|
 
 Add a message and publish to subscribers of a topic :: parameter => topic id , payload => message
 
