@@ -187,7 +187,7 @@
       'file' => 
       array (
         'driver' => 'file',
-        'path' => 'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\subscribing-server-01\\storage\\framework/cache/data',
+        'path' => 'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\Subscribers\\subscribing-server-02\\storage\\framework/cache/data',
       ),
       'memcached' => 
       array (
@@ -354,12 +354,12 @@
       'local' => 
       array (
         'driver' => 'local',
-        'root' => 'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\subscribing-server-01\\storage\\app',
+        'root' => 'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\Subscribers\\subscribing-server-02\\storage\\app',
       ),
       'public' => 
       array (
         'driver' => 'local',
-        'root' => 'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\subscribing-server-01\\storage\\app/public',
+        'root' => 'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\Subscribers\\subscribing-server-02\\storage\\app/public',
         'url' => 'http://subscribing-server-01.test/storage',
         'visibility' => 'public',
       ),
@@ -376,7 +376,7 @@
     ),
     'links' => 
     array (
-      'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\subscribing-server-01\\public\\storage' => 'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\subscribing-server-01\\storage\\app/public',
+      'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\Subscribers\\subscribing-server-02\\public\\storage' => 'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\Subscribers\\subscribing-server-02\\storage\\app/public',
     ),
   ),
   'hashing' => 
@@ -410,13 +410,13 @@
       'single' => 
       array (
         'driver' => 'single',
-        'path' => 'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\subscribing-server-01\\storage\\logs/laravel.log',
+        'path' => 'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\Subscribers\\subscribing-server-02\\storage\\logs/laravel.log',
         'level' => 'debug',
       ),
       'daily' => 
       array (
         'driver' => 'daily',
-        'path' => 'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\subscribing-server-01\\storage\\logs/laravel.log',
+        'path' => 'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\Subscribers\\subscribing-server-02\\storage\\logs/laravel.log',
         'level' => 'debug',
         'days' => 14,
       ),
@@ -467,7 +467,7 @@
       ),
       'emergency' => 
       array (
-        'path' => 'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\subscribing-server-01\\storage\\logs/laravel.log',
+        'path' => 'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\Subscribers\\subscribing-server-02\\storage\\logs/laravel.log',
       ),
     ),
   ),
@@ -524,7 +524,7 @@
       'theme' => 'default',
       'paths' => 
       array (
-        0 => 'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\subscribing-server-01\\resources\\views/vendor/mail',
+        0 => 'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\Subscribers\\subscribing-server-02\\resources\\views/vendor/mail',
       ),
     ),
   ),
@@ -607,7 +607,7 @@
     'lifetime' => '120',
     'expire_on_close' => false,
     'encrypt' => false,
-    'files' => 'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\subscribing-server-01\\storage\\framework/sessions',
+    'files' => 'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\Subscribers\\subscribing-server-02\\storage\\framework/sessions',
     'connection' => NULL,
     'table' => 'sessions',
     'store' => NULL,
@@ -627,9 +627,9 @@
   array (
     'paths' => 
     array (
-      0 => 'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\subscribing-server-01\\resources\\views',
+      0 => 'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\Subscribers\\subscribing-server-02\\resources\\views',
     ),
-    'compiled' => 'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\subscribing-server-01\\storage\\framework\\views',
+    'compiled' => 'C:\\Users\\hp\\Desktop\\work\\upgrade\\Pangaea-publishing-server\\Subscribers\\subscribing-server-02\\storage\\framework\\views',
   ),
   'websockets' => 
   array (

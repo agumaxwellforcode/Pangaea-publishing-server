@@ -436,7 +436,7 @@
                                 </path>
                             </svg>
                             <div class="ml-4 text-lg leading-7 font-semibold"><a href="#"
-                                    class=" text-gray-900 dark:text-white">Hello, i am a subscriber</a></div>
+                                    class=" text-gray-900 dark:text-white">Hello, i am a subscriber 01</a></div>
                         </div>
 
                         <div class="ml-12">

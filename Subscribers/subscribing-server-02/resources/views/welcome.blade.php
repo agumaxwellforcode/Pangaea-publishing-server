@@ -436,7 +436,7 @@
                                 </path>
                             </svg>
                             <div class="ml-4 text-lg leading-7 font-semibold"><a href="#"
-                                    class=" text-gray-900 dark:text-white">Hello, i am a subscriber</a></div>
+                                    class=" text-gray-900 dark:text-white">Hello, i am a subscriber 02</a></div>
                         </div>
 
                         <div class="ml-12">
@@ -445,7 +445,7 @@
                                 recieve messages from the publisher and notify my boss !! <br><br>
 
                                 Note !! <br>
-                                If my boss want's to read it, cool. 😎😎😎, 👉👉👉<br>
+                                If my boss want's to read it, cool. 😎😎😎,<br>
                                 and if my boss dosen't want to, 😉😉, even cooler 🤣🤣🤣
 
                             </div>
