@@ -52,6 +52,7 @@
                                         <li class="">Register topics,</li>
                                         <li class="">Register Subscribers,</li>
                                         <li class="">Add messages to topics and publish them to subscribers,</li>
+                                        <li class="">Checkout a demo <a class="underline" target="blank" href="https://drive.google.com/file/d/1ZCzl-vPqBwPf9ncF8UAFrXuhz3FOgAaw/view">Here</a></li>
 
                                     </ul>
                                     cool 😎
