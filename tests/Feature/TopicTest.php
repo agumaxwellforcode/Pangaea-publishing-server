@@ -10,11 +10,7 @@ use App\Models\Topic;
 
 class TopicTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
+   
     public function testToLoadHomePageSuccessfully()
     {
         $response = $this->get('/');
@@ -22,7 +18,7 @@ class TopicTest extends TestCase
         $response ->assertStatus(200);
     }
 
-    public function testRequiredFieldsForTopicCreation()
+    public function testForRequiredFieldsForTopicCreation()
     {
         $payload = [
             'topic' => ''
@@ -42,7 +38,7 @@ class TopicTest extends TestCase
                 ]
             ]);
     }
-    public function testsTopicsAreCreatedCorrectly()
+    public function testForTopicCanBeCreatedSuccessfully()
     {
 
         $payload = [
@@ -59,19 +55,8 @@ class TopicTest extends TestCase
             ]);
     }
 
-    public function testsTopicsAreCreatedCorrectly2()
-    {
-        $response = $this->post('/api/topics', ['topic' => 'I love Pangaea']);
-        $response->assertStatus(201)
-                ->assertJson([
-                    'code' => 201,
-                    'status' => 'success',
-                    'message' => 'Topic created successfully',
-                    'data' => ['topic' => 'I love Pangaea']
-                ]);
-    }
 
-    public function testsEachTopicSearchReturnsCorrectly()
+    public function testForEachTopicSearchReturnsCorrectly()
     {
 
         $topic = Topic::create(
@@ -94,20 +79,6 @@ class TopicTest extends TestCase
 
             ]
         ]);
-        // ->assertJson(
-        //     [
-        //         'code'=> 200,
-        //         'status'=> 'success',
-        //         'message'=> 'Topic returned successfully',
-        //         'data'=> [
-        //             'id'=> 1,
-        //             'topic'=> 'I love Pangaea',
-        //             'created_at'=> '2021-04-11T13:59:03.000000Z',
-        //             'updated_at'=> '2021-04-11T13:59:03.000000Z',
-
-        //         ]
-        //     ]
-        // );
     }
 
 

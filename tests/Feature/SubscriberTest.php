@@ -11,7 +11,7 @@ class SubscriberTest extends TestCase
 {
 
 
-    public function testsForSubscriberCanBeCreatedSuccessfully()
+    public function testForSubscriberCanSuccessfullySubscribeToATopic()
     {
 
         $topic = Topic::create(
@@ -41,4 +41,5 @@ class SubscriberTest extends TestCase
                     'url'=>  $subscriber->url,
                 ]
             ]);
-   
+    }
+}
