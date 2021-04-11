@@ -77,7 +77,7 @@ class MessageController extends Controller
 
             if ($addNewMessageToTopic) {
                 $totalNumberOfSubscribers = $targetTopic->subscribers->count(); // count number of subscribers subscribed to the topic / Target audience
-                $totalNumberOfSubscribersProcessed = 0; // initialize subscriber count
+
 
 
                 // check for zero (0) subscribers for the target topic
@@ -93,30 +93,7 @@ class MessageController extends Controller
                     ], 200);
                 }
 
-                // NB: The following block implements a synchronouse dispatch of message to each subscriber
-                // This is only suitable for very small applications such as this but very ineffecient and
-                // costly(speed and processing resources) for medium - large - enterprise applications with many subscribers/clients/users
-                // Hence the need for asynchroneous dispatch using queues (database. redis, Beanstalkd, ...) becomes a very effecient and scalable approach
-                // I'll create another instance (Branch == asynchronous-approach) and implement the dispatch using queues as a scalable approach
 
-                foreach ($targetTopic->subscribers as $subscriber) {
-
-                    $url = $subscriber->url . '/recieve-message';
-
-                    // check for zero (0) subscribers for the target topic
-
-                    $totalNumberOfSubscribers = $targetTopic->subscribers->count();
-                    if ($totalNumberOfSubscribers == 0) {
-                        return response()->json([
-                            'code' => 200,
-                            'status' => 'success',
-                            'message' => 'Meassge added successfully but the topic has no subscribers',
-                            'data' => [
-                                'topic' => $payload->topic,
-                                'message' => $payload->message
-                            ]
-                        ], 200);
-                    }
                     // I Used database queue for this application,
                     // I recommend Redis or a third party service for large - enterprice Applications
                     // Dispatch using queues as a scalable approach
@@ -130,7 +107,7 @@ class MessageController extends Controller
                             'message' => $err
                         ], 501);
                     }
-                }
+
             } else {
                 return response()->json([
                     'code' => 501,
@@ -147,3 +124,5 @@ class MessageController extends Controller
         }
     }
 }
+
+
