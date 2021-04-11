@@ -37,7 +37,7 @@ while the app can continue processing other tasks.
 I applied this approach on the app, but only active on the asynchronous-approach branch.
 Checkout to asynchronous-approach branch and the app will work on the task asynchronously.
 
-
+run php artisan queue:work
 
 ### Setup and Installation ( Publisher )
 
