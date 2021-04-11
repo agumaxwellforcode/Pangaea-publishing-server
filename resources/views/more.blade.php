@@ -76,6 +76,7 @@
                                 <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
                                    The application is not containerized, hence the manual commands.
                                    <ul>
+                                    <li class=""><code>cd Subscribers/subcriber-0n  => (n = 1 or 2)</code></li>
                                     <li class=""><code>composer install</code></li>
                                     <li class="">Set .env variables, refer to ENV variables</li>
                                     <li class=""><code>php artisan migrate</code></li>
@@ -83,6 +84,7 @@
                                     <li class=""><code>php artisan websockets:serve</code> to start listening </li>
                                     <li class=""><code>npm install</code></li>
                                     <li class=""><code>npm run dev</code></li>
+                                    <li class=""><code>php artisan serve --port {any port of choice}</code> except publisher port </li>
 
                                 </ul>
                                 </div>
