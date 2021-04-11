@@ -3,26 +3,22 @@
 namespace Tests\Feature;
 
 
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
+use Illuminate\Http\Response;
 use App\Models\Topic;
+
 
 class TopicTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     *
-     * @return void
-     */
-    public function test_example()
+   
+    public function testToLoadHomePageSuccessfully()
     {
         $response = $this->get('/');
 
-        $response->assertStatus(200);
+        $response ->assertStatus(200);
     }
 
-    public function testRequiredFieldsForTopicCreation()
+    public function testForRequiredFieldsForTopicCreation()
     {
         $payload = [
             'topic' => ''
@@ -42,7 +38,7 @@ class TopicTest extends TestCase
                 ]
             ]);
     }
-    public function testsTopicsAreCreatedCorrectly()
+    public function testForTopicCanBeCreatedSuccessfully()
     {
 
         $payload = [
@@ -51,7 +47,6 @@ class TopicTest extends TestCase
 
         $this->json('POST', '/api/topics', $payload)
             ->assertStatus(201)
-            // ->assertJson(['id' => 1, 'topic' => 'I love Pangaea']);
             ->assertJson([
                 'code' => 201,
                 'status' => 'success',
@@ -60,11 +55,30 @@ class TopicTest extends TestCase
             ]);
     }
 
-    public function testsTopicsAreCreatedCorrectly2()
-    {
-        $response = $this->post('/api/topics', ['topic' => 'I love Pangaea']);
 
-        $response->assertStatus(201);
+    public function testForEachTopicSearchReturnsCorrectly()
+    {
+
+        $topic = Topic::create(
+            [
+                'topic' => 'I love Pangaea'
+            ]
+        );
+
+       $this->json('get', "api/topics/$topic->id")
+        ->assertStatus(200)
+        ->assertJsonFragment( [
+            'code'=> 200,
+            'status'=> 'success',
+            'message'=> 'Topic returned successfully',
+            'data'=> [
+                'id'=> $topic->id,
+                'topic'=>  $topic->topic,
+                'created_at'=>  $topic->created_at,
+                'updated_at'=>  $topic->updated_at,
+
+            ]
+        ]);
     }
 
 

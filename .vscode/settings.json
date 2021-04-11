@@ -1,3 +1,4 @@
 {
-    "intelephense.diagnostics.undefinedVariables": false
+    "intelephense.diagnostics.undefinedVariables": false,
+    "git.ignoreLimitWarning": true
 }
